@@ -159,9 +159,48 @@
             background-color: #eee;
         }
         
+        /* Image container styles */
+        .image-container {
+            border: 2px dashed #ccc;
+            padding: 5px;
+            margin: 10px 0;
+            display: inline-block;
+            position: relative;
+            max-width: 100%;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .resize-handle {
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            cursor: nwse-resize;
+            user-select: none;
+        }
+        
+        .image-container.selected {
+            border-color: var(--primary-red);
+        }
+        
         @media (max-width: 768px) {
             .form-container {
                 padding: 20px;
+            }
+            
+            .editor-toolbar {
+                justify-content: center;
             }
         }
         
@@ -305,11 +344,71 @@
             document.getElementById('post-content').focus();
         }
         
-        // Insert image
+        // Insert image as a resizable block
         function insertImage() {
             const url = prompt('Nhập URL hình ảnh:', '');
             if (url) {
-                document.execCommand('insertImage', false, url);
+                // Create image container
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'image-container';
+                imgContainer.style.position = 'relative';
+                imgContainer.style.display = 'inline-block';
+                imgContainer.style.margin = '10px 0';
+                
+                // Create image element
+                const img = document.createElement('img');
+                img.src = url;
+                img.style.maxWidth = '100%';
+                img.style.display = 'block';
+                img.style.width = '300px'; // Default width
+                img.style.height = 'auto';
+                
+                // Add resize handle
+                const resizeHandle = document.createElement('div');
+                resizeHandle.className = 'resize-handle';
+                resizeHandle.innerHTML = '↔';
+                
+                // Add resize functionality
+                let startX, startY, startWidth, startHeight;
+                
+                resizeHandle.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(img).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(img).height, 10);
+                    
+                    document.addEventListener('mousemove', doResize, false);
+                    document.addEventListener('mouseup', stopResize, false);
+                });
+                
+                function doResize(e) {
+                    img.style.width = (startWidth + e.clientX - startX) + 'px';
+                    // Maintain aspect ratio
+                    if (img.naturalWidth && img.naturalHeight) {
+                        const ratio = img.naturalWidth / img.naturalHeight;
+                        img.style.height = (parseInt(img.style.width) / ratio) + 'px';
+                    }
+                }
+                
+                function stopResize() {
+                    document.removeEventListener('mousemove', doResize, false);
+                    document.removeEventListener('mouseup', stopResize, false);
+                }
+                
+                // Add elements to container
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(resizeHandle);
+                
+                // Insert into editor
+                const range = window.getSelection().getRangeAt(0);
+                range.insertNode(imgContainer);
+                range.setStartAfter(imgContainer);
+                
+                // Focus editor
+                document.getElementById('post-content').focus();
             }
         }
         
@@ -322,6 +421,9 @@
             const email = document.getElementById('author-email').value;
             const content = document.getElementById('post-content').innerHTML;
             
+            // Generate search keywords
+            const keywords = generateKeywords(title);
+            
             try {
                 const timestamp = firebase.firestore.FieldValue.serverTimestamp();
                 
@@ -332,7 +434,8 @@
                     content: content,
                     createdAt: timestamp,
                     views: 0,
-                    approved: true
+                    approved: true,
+                    keywords: keywords
                 });
                 
                 // Show success message
@@ -359,6 +462,23 @@
                 formAlert.style.display = 'block';
             }
         });
+        
+        // Generate search keywords from title
+        function generateKeywords(title) {
+            const words = title.toLowerCase().split(/\s+/);
+            const keywords = new Set();
+            
+            // Add all possible substrings for better search
+            for (let i = 0; i < words.length; i++) {
+                let substring = '';
+                for (let j = i; j < words.length; j++) {
+                    substring = (substring + ' ' + words[j]).trim();
+                    keywords.add(substring);
+                }
+            }
+            
+            return Array.from(keywords);
+        }
     </script>
     
     <script>
