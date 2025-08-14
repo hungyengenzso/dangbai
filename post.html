@@ -52,6 +52,14 @@
             margin-bottom: 20px;
         }
         
+        .btn-post {
+            background-color: var(--primary-red);
+            color: white;
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin-left: 10px;
+        }
+        
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -85,10 +93,11 @@
         
         .search-container {
             margin-bottom: 20px;
+            display: flex;
         }
         
         .search-input {
-            width: 100%;
+            flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -151,9 +160,32 @@
             padding: 20px;
         }
         
+        /* Image container styles */
+        .post-content .image-container {
+            max-width: 100%;
+            margin: 15px auto;
+            text-align: center;
+        }
+        
+        .post-content .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
         @media (max-width: 768px) {
             .post-list-container, .post-detail-container {
                 padding: 20px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .btn-post {
+                margin-left: 0;
+                margin-top: 10px;
             }
         }
         
@@ -189,6 +221,7 @@
         <div class="post-list-container" id="post-list">
             <div class="search-container">
                 <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm bài đăng...">
+                <button id="post-btn" class="btn btn-post"><i class="fas fa-pen"></i> Đăng bài</button>
             </div>
             
             <div id="posts-container">
@@ -234,6 +267,7 @@
         const postsContainer = document.getElementById('posts-container');
         const searchInput = document.getElementById('search-input');
         const backBtn = document.getElementById('back-btn');
+        const postBtn = document.getElementById('post-btn');
         
         // Load posts
         function loadPosts(searchTerm = '') {
@@ -243,14 +277,14 @@
                           .where("approved", "==", true)
                           .orderBy("createdAt", "desc");
             
-            if (searchTerm) {
-                query = query.where("title", ">=", searchTerm)
-                            .where("title", "<=", searchTerm + '\uf8ff');
+            if (searchTerm.trim() !== '') {
+                const searchLower = searchTerm.toLowerCase();
+                query = query.where("keywords", "array-contains", searchLower);
             }
             
             query.get().then((querySnapshot) => {
                 if (querySnapshot.empty) {
-                    postsContainer.innerHTML = '<div class="loading"><p>Không có bài đăng nào.</p></div>';
+                    postsContainer.innerHTML = '<div class="loading"><p>Không tìm thấy bài đăng nào phù hợp.</p></div>';
                     return;
                 }
                 
@@ -292,7 +326,7 @@
             document.getElementById('detail-author').textContent = post.author;
             document.getElementById('detail-date').textContent = postDate;
             document.getElementById('detail-views').textContent = (post.views || 0) + 1;
-            document.getElementById('detail-content').innerHTML = post.content;
+            document.getElementById('detail-content').innerHTML = processPostContent(post.content);
             document.getElementById('detail-author-email').textContent = `Liên hệ: ${post.email}`;
             
             postList.style.display = 'none';
@@ -306,8 +340,17 @@
         });
         
         // Search functionality
+        let searchTimeout;
         searchInput.addEventListener('input', (e) => {
-            loadPosts(e.target.value);
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadPosts(e.target.value);
+            }, 500);
+        });
+        
+        // Post button click
+        postBtn.addEventListener('click', () => {
+            window.location.href = "intro.html";
         });
         
         // Helper function to get preview text
@@ -316,6 +359,37 @@
             tempDiv.innerHTML = html;
             const text = tempDiv.textContent || tempDiv.innerText || '';
             return text.substring(0, 80).trim();
+        }
+        
+        // Process post content for display
+        function processPostContent(content) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            
+            // Xử lý các image container nếu có
+            const containers = tempDiv.querySelectorAll('.image-container');
+            containers.forEach(container => {
+                container.style.display = 'block';
+                container.style.textAlign = 'center';
+                container.style.margin = '15px auto';
+                container.style.maxWidth = '100%';
+                
+                const img = container.querySelector('img');
+                if (img) {
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.margin = '0 auto';
+                    img.style.display = 'block';
+                }
+                
+                // Xóa resize handle nếu có
+                const resizeHandle = container.querySelector('.resize-handle');
+                if (resizeHandle) {
+                    resizeHandle.remove();
+                }
+            });
+            
+            return tempDiv.innerHTML;
         }
         
         // Initial load
