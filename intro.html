@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trưng Vương 4.0 - Giới thiệu</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #d70202;
+            --light-yellow: #fff3b6;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--light-yellow);
+            color: var(--primary-red);
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: white;
+            transform: translateY(-3px);
+        }
+        
+        .btn-email {
+            background-color: var(--primary-red);
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        
+        .btn-email:hover {
+            background-color: #b30000;
+            transform: translateY(-3px);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-red);
+            margin: 15px auto;
+        }
+        
+        /* Content Styles */
+        .content-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 20px auto;
+        }
+        
+        .intro-text {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .benefits {
+            margin: 30px 0;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .benefit-icon {
+            color: var(--primary-red);
+            margin-right: 15px;
+            font-size: 1.5rem;
+            margin-top: 3px;
+        }
+        
+        .benefit-text {
+            flex: 1;
+        }
+        
+        .contact-info {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .email-link {
+            color: var(--primary-red);
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 20px;
+            }
+        }
+        
+        .iframe-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 520px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .iframe-layer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Iframe trên cùng -->
+    <div class="iframe-layer">
+        <iframe src="https://hungyenhoinhapvaphattrien.github.io/vi/top"></iframe>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title"><i class="fas fa-info-circle"></i> TRƯNG VƯƠNG 4.0 - GIỚI THIỆU</h2>
+        
+        <div class="content-container">
+            <div class="intro-text">
+                <p>Chào mừng bạn đến với chuyên mục đăng bài của Trưng Vương 4.0! Đây là nơi để các bạn học sinh, giáo viên và cộng đồng chia sẻ những bài viết, ý tưởng, sáng kiến về tỉnh Hưng Yên mới sau khi sát nhập với Thái Bình.</p>
+            </div>
+            
+            <div class="benefits">
+                <h3>Lợi ích khi đăng bài:</h3>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon"><i class="fas fa-gem"></i></div>
+                    <div class="benefit-text">
+                        <h4>Nhuận bút hấp dẫn</h4>
+                        <p>Những bài viết chất lượng, được nhiều người đón nhận sẽ nhận được nhuận bút theo quy định của nhà trường.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon"><i class="fas fa-star"></i></div>
+                    <div class="benefit-text">
+                        <h4>Cơ hội được ghi nhận</h4>
+                        <p>Những ý tưởng hay có thể được nhà trường và địa phương xem xét áp dụng vào thực tế.</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="benefit-text">
+                        <h4>Điểm thưởng</h4>
+                        <p>Bài viết được đăng sẽ được cộng điểm thưởng trong các môn học liên quan (Lịch sử, Địa lý, GDCD).</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="intro-text">
+                <h3>Cách thức đăng bài:</h3>
+                <p>Để đăng bài, bạn có thể chọn một trong hai cách sau:</p>
+                <ol>
+                    <li>Viết bài trực tiếp trên website (dành cho quản trị viên và giáo viên)</li>
+                    <li>Gửi bài viết qua email để được biên tập và đăng tải</li>
+                </ol>
+            </div>
+            
+            <div class="contact-info">
+                <h3>Gửi bài viết qua email</h3>
+                <p>Bạn có thể soạn bài viết và gửi đến địa chỉ email của chúng tôi để được xét duyệt và đăng tải.</p>
+                <a href="mailto:Dothoinn@gmail.com" class="btn btn-email">
+                    <i class="fas fa-paper-plane"></i> Gửi bài đến Dothoinn@gmail.com
+                </a>
+                <p style="margin-top: 15px;">Vui lòng ghi rõ tiêu đề: "BÀI DỰ THI TRƯNG VƯƠNG 4.0 - [TÊN BÀI]"</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function updatePadding() {
+            const screenWidth = window.innerWidth; 
+            const padding = screenWidth * 0.2; 
+            document.body.style.paddingTop = 100 + padding + "px";
+        }
+
+        window.addEventListener("load", updatePadding);
+        window.addEventListener("resize", updatePadding);
+    </script>
+</body>
+</html>
