@@ -57,7 +57,19 @@
             color: white;
             font-size: 1rem;
             padding: 10px 20px;
-            margin-left: 10px;
+            margin: 20px auto;
+            display: block;
+            width: fit-content;
+        }
+        
+        .btn-load-more {
+            background-color: var(--light-yellow);
+            color: var(--primary-red);
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin: 20px auto;
+            display: block;
+            width: fit-content;
         }
         
         .container {
@@ -177,6 +189,7 @@
         @media (max-width: 768px) {
             .post-list-container, .post-detail-container {
                 padding: 20px;
+                margin-top: 150px;
             }
             
             .search-container {
@@ -215,13 +228,12 @@
     </div>
 
     <div class="container">
-        <h2 class="section-title"><i class="fas fa-newspaper"></i> TRƯNG VƯƠNG 4.0 - BÀI ĐĂNG</h2>
+        <h2 class="section-title"><i class="fas fa-newspaper"></i> TRƯNG VƯƠNG 4.0</h2>
         
         <!-- Post List View -->
         <div class="post-list-container" id="post-list">
             <div class="search-container">
                 <input type="text" class="search-input" id="search-input" placeholder="Tìm kiếm bài đăng...">
-                <button id="post-btn" class="btn btn-post"><i class="fas fa-pen"></i> Đăng bài</button>
             </div>
             
             <div id="posts-container">
@@ -229,6 +241,9 @@
                     <p>Đang tải bài đăng...</p>
                 </div>
             </div>
+            
+            <button id="load-more-btn" class="btn btn-load-more" style="display: none;"><i class="fas fa-plus"></i> Xem thêm</button>
+            <button id="post-btn" class="btn btn-post"><i class="fas fa-pen"></i> Đăng bài</button>
         </div>
         
         <!-- Post Detail View -->
@@ -268,14 +283,32 @@
         const searchInput = document.getElementById('search-input');
         const backBtn = document.getElementById('back-btn');
         const postBtn = document.getElementById('post-btn');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        
+        // Variables for pagination
+        let lastVisible = null;
+        let currentSearchTerm = '';
+        let postsLoaded = 0;
+        const postsPerPage = 10;
         
         // Load posts
-        function loadPosts(searchTerm = '') {
-            postsContainer.innerHTML = '<div class="loading"><p>Đang tải bài đăng...</p></div>';
+        function loadPosts(searchTerm = '', loadMore = false) {
+            if (!loadMore) {
+                postsContainer.innerHTML = '<div class="loading"><p>Đang tải bài đăng...</p></div>';
+                postsLoaded = 0;
+                lastVisible = null;
+            }
+            
+            currentSearchTerm = searchTerm;
             
             let query = db.collection("posts")
                           .where("approved", "==", true)
-                          .orderBy("createdAt", "desc");
+                          .orderBy("createdAt", "desc")
+                          .limit(postsPerPage);
+            
+            if (loadMore && lastVisible) {
+                query = query.startAfter(lastVisible);
+            }
             
             if (searchTerm.trim() !== '') {
                 const searchLower = searchTerm.toLowerCase();
@@ -284,11 +317,21 @@
             
             query.get().then((querySnapshot) => {
                 if (querySnapshot.empty) {
-                    postsContainer.innerHTML = '<div class="loading"><p>Không tìm thấy bài đăng nào phù hợp.</p></div>';
+                    if (loadMore) {
+                        loadMoreBtn.style.display = 'none';
+                    } else {
+                        postsContainer.innerHTML = '<div class="loading"><p>Không tìm thấy bài đăng nào phù hợp.</p></div>';
+                        loadMoreBtn.style.display = 'none';
+                    }
                     return;
                 }
                 
-                postsContainer.innerHTML = '';
+                if (!loadMore) {
+                    postsContainer.innerHTML = '';
+                }
+                
+                postsLoaded += querySnapshot.docs.length;
+                lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
                 
                 querySnapshot.forEach((doc) => {
                     const post = doc.data();
@@ -307,9 +350,20 @@
                     postItem.addEventListener('click', () => showPostDetail(doc.id, post));
                     postsContainer.appendChild(postItem);
                 });
+                
+                // Show or hide load more button
+                if (querySnapshot.docs.length === postsPerPage) {
+                    loadMoreBtn.style.display = 'block';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+                
             }).catch((error) => {
                 console.error("Error getting documents: ", error);
-                postsContainer.innerHTML = '<div class="loading"><p>Có lỗi xảy ra khi tải bài đăng.</p></div>';
+                if (!loadMore) {
+                    postsContainer.innerHTML = '<div class="loading"><p>Có lỗi xảy ra khi tải bài đăng.</p></div>';
+                }
+                loadMoreBtn.style.display = 'none';
             });
         }
         
@@ -346,6 +400,11 @@
             searchTimeout = setTimeout(() => {
                 loadPosts(e.target.value);
             }, 500);
+        });
+        
+        // Load more button click
+        loadMoreBtn.addEventListener('click', () => {
+            loadPosts(currentSearchTerm, true);
         });
         
         // Post button click
@@ -400,7 +459,7 @@
         function updatePadding() {
             const screenWidth = window.innerWidth; 
             const padding = screenWidth * 0.2; 
-            document.body.style.paddingTop = 100 + padding + "px";
+            document.body.style.paddingTop = 150 + padding + "px";
         }
 
         window.addEventListener("load", updatePadding);
