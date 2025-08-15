@@ -94,6 +94,16 @@
             margin: 15px auto;
         }
         
+        .description-text {
+            text-align: center;
+            color: var(--primary-red);
+            font-weight: bold;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+        
         /* Post List Styles */
         .post-list-container {
             background-color: white;
@@ -189,7 +199,12 @@
         @media (max-width: 768px) {
             .post-list-container, .post-detail-container {
                 padding: 20px;
-                margin-top: 150px;
+                margin-top: 100px;
+            }
+            
+            .description-text {
+                font-size: 15px;
+                padding: 0 10px;
             }
             
             .search-container {
@@ -229,6 +244,11 @@
 
     <div class="container">
         <h2 class="section-title"><i class="fas fa-newspaper"></i> TRƯNG VƯƠNG 4.0</h2>
+        <p class="description-text">
+            Đẩy mạnh phong trào toàn dân số hoá và Giao thoa văn hoá toàn tỉnh,<br>
+            chúng tôi xin chào mừng các bài viết về thông tin giáo dục, chia sẻ kinh nghiệm của các bạn.<br>
+            Bài nào hay xuất sắc sẽ được đăng và hưởng nhuận bút.
+        </p>
         
         <!-- Post List View -->
         <div class="post-list-container" id="post-list">
